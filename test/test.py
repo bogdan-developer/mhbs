@@ -32,14 +32,15 @@ async def test_project(dut):
     # Wait for one clock cycle to see the output values
     await ClockCycles(dut.clk, 1)
 
-    
-    expected = ~0b00010101
+    # topEntity computes: result = ~r_input (bitwise NOT)
+    # Use 0xFF mask to get unsigned 8-bit result
+    expected = ~0b00010101 & 0xFF  # 234 decimal
     assert dut.uo_out.value == expected, f"Expected {expected}, got {dut.uo_out.value}"
 
     # Test with another value
     dut.ui_in.value = 0b11110000  # 240 decimal
     await ClockCycles(dut.clk, 1)
-    expected = ~0b11110000
+    expected = ~0b11110000 & 0xFF  # 15 decimal
     assert dut.uo_out.value == expected, f"Expected {expected}, got {dut.uo_out.value}"
 
     # Keep testing the module by changing the input values, waiting for
